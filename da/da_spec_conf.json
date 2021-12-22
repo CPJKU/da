@@ -1,0 +1,29 @@
+{
+  "cmd": {
+    "n_moments": 5
+  },
+  "coral": {
+
+  },
+  "dann": {
+    "grad_scale_factor": 1.0,
+    "auto_critic_update": false,
+    "critic_iter": 5
+  },
+  "jdot": {
+    "jdot_alpha": 10.0
+  },
+  "mmd": {
+    "kernel_mul": 2,
+    "kernel_num": 4,
+    "fix_sigma": null
+  },
+  "swd": {
+    "multiplier": 8,
+    "p": 2
+  },
+  "wdgrl": {
+    "gp_da_lambda": 10.0,
+    "critic_iter": 5
+  }
+}

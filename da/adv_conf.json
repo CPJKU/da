@@ -1,0 +1,14 @@
+{
+    "da_optimizer_config": {
+      "lr": 0.0001,
+      "weight_decay": 0.001
+    },
+    "da_net_config": {
+      "layers_width": [
+        64,
+        32
+      ],
+      "act_function": "relu",
+      "dropout": 0.0
+    }
+}
