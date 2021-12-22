@@ -15,7 +15,7 @@ The package is available via PyPI by running the following command:
 Alternatively, if you also want to run examples and modify the code, 
 clone the repository and install it manually:
 
-1. `git clone git@github.com:CPJKU/domainadaptation.git`
+1. `git clone git@github.com:CPJKU/da.git`
 2. `cd domainadaptation`
 3. `pip install -e .`
 4. In addition to the package requirements installed automatically in 3), run `pip install -r requirements.txt` to get necessary dependencies for running the examples.
