@@ -30,6 +30,9 @@ def main(run_conf, da_conf, exp_dir):
         da = None
 
     # loading dataset
+    if not os.path.exists(run_conf['data_dir']):
+        print("The data for this task is currently not publicly available...")
+        exit()
     data = pickle.load(open(run_conf['data_dir'], 'rb'))
     train_dataset = ProcessedDataset(data['train'])
     train_dataset = OversamplingDataset(train_dataset, oversampling_rate=run_conf['oversampling_rate'])

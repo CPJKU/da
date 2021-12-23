@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 
-import os
 from io import open
-# Always prefer setuptools over distutils
 from setuptools import setup
-import da
 
 # https://packaging.python.org/discussions/install-requires-vs-requirements /
 # keep the meta-data here for simplicity in reading this file... it's not obvious
