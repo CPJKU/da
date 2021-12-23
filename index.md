@@ -165,7 +165,7 @@ methods, **DeepJDot** also requires source domain labels and target domain predi
 ## MNIST to MNISTM Example
 
 For demonstration purposes the repository contains a popular image classification example, called 
-[MNIST to MNISTM](https://shawmask.github.io/domainadaptation/mnist_to_mnistm), which was introduced by Ganin et al. [6].
+[MNIST to MNISTM](https://github.com/CPJKU/da/tree/main/mnist_to_mnistm), which was introduced by Ganin et al. [6].
 As shown in the image below, the MNIST [7] digits are the source domain images. The target domain is obtained by blending the
 MNIST digits with real-world color photos from BSDS500 [8]. 
 
