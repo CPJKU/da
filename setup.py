@@ -6,7 +6,7 @@ from setuptools import setup
 
 setup(
     name="da",
-    version="0.0.1",
+    version="0.0.2",
     description="Pytorch domain adaptation package",
     author="Schmid, F. and Masoudian, S.",
     author_email="florian.schmid@jku.at, shahed.masoudian@jku.at",
