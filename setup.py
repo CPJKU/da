@@ -11,7 +11,7 @@ setup(
     author="Schmid, F. and Masoudian, S.",
     author_email="florian.schmid@jku.at, shahed.masoudian@jku.at",
     url="https://github.com/CPJKU/da",
-    license="GNU License",
+    license="GPLv2",
     packages=["da"],
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
