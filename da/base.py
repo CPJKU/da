@@ -196,8 +196,6 @@ class DABase:
             assert self.num_domains == 2
         elif self.da_type == "jdot":
             assert self.num_domains == 2
-            # deepjdot currently only implemented for single embedding layer
-            assert len(self.embeds_idx) == 1
             # deepjdot currently not implemented for regression
             assert self.num_classes is not None
             self.deepJDot = deep_j_dot.DeepJDot(self.num_classes, self.da_spec_config['jdot']['jdot_alpha'])
