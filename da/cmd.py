@@ -28,6 +28,10 @@ def cmd_loss(embeds, domain_labels, n_moments, da_info):
 
 
 def cmd(src_embed, tgt_embed, n_moments):
+    if torch.mean(torch.abs(src_embed) + torch.abs(tgt_embed)) <= 1e-7:
+        print("Warning: feature representations tend towards zero. "
+              "Consider decreasing 'da_lambda' or using lambda schedule.")
+
     src_mean = src_embed.mean(dim=0)
     tgt_mean = tgt_embed.mean(dim=0)
 

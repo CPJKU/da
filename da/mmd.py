@@ -27,6 +27,9 @@ def mmd_loss(embeds, domain_labels, kernel_mul, kernel_num, fix_sigma, da_info):
 
 def gaussian_kernel(src_embed, tgt_embed, kernel_mul, kernel_num, fix_sigma):
     """Given source and target embeddings calculates kernel matrix based on given specific parameters."""
+    if torch.mean(torch.abs(src_embed) + torch.abs(tgt_embed)) <= 1e-7:
+        print("Warning: feature representations tend towards zero. "
+              "Consider decreasing 'da_lambda' or using lambda schedule.")
     n_samples = int(src_embed.size()[0] + tgt_embed.size()[0])
     total = torch.cat([src_embed, tgt_embed], dim=0)
     total0 = total.unsqueeze(0).expand(int(total.size(0)), int(total.size(0)), int(total.size(1)))
@@ -36,9 +39,6 @@ def gaussian_kernel(src_embed, tgt_embed, kernel_mul, kernel_num, fix_sigma):
         bandwidth = fix_sigma
     else:
         bandwidth = torch.sum(l2_distance.detach()) / (n_samples ** 2 - n_samples)
-        if bandwidth == 0:
-            print("Warning: l2 distances of feature representations tend towards zero. "
-                  "Consider decreasing 'da_lambda'.")
     bandwidth /= kernel_mul ** (kernel_num // 2)  # shift bandwidth to the left
     bandwidth_list = [bandwidth * (kernel_mul ** i) for i in range(kernel_num)]
     kernel_val = [torch.exp(-l2_distance / (bandwidth_temp + 1e-5)) for bandwidth_temp in bandwidth_list]
