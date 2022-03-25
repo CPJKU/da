@@ -35,20 +35,24 @@ def gaussian_kernel(src_embed, tgt_embed, kernel_mul, kernel_num, fix_sigma):
     if fix_sigma:
         bandwidth = fix_sigma
     else:
-        bandwidth = torch.sum(l2_distance.data) / (n_samples ** 2 - n_samples)
-    bandwidth /= kernel_mul ** (kernel_num // 2)
+        bandwidth = torch.sum(l2_distance.detach()) / (n_samples ** 2 - n_samples)
+        if bandwidth == 0:
+            print("Warning: l2 distances of feature representations tend towards zero. "
+                  "Consider decreasing 'da_lambda'.")
+    bandwidth /= kernel_mul ** (kernel_num // 2)  # shift bandwidth to the left
     bandwidth_list = [bandwidth * (kernel_mul ** i) for i in range(kernel_num)]
-    kernel_val = [torch.exp(-l2_distance / bandwidth_temp) for bandwidth_temp in bandwidth_list]
+    kernel_val = [torch.exp(-l2_distance / (bandwidth_temp + 1e-5)) for bandwidth_temp in bandwidth_list]
     return sum(kernel_val)
 
 
 def mmd(src_embed, tgt_embed, kernel_mul, kernel_num, fix_sigma):
     src_batch_size = src_embed.size(0)
     tgt_batch_size = tgt_embed.size(0)
+    # handle case when source and target are not of same size
+    # we extend both to the fixed size 'batch size', because sizes should not vary between batches
     batch_size = src_batch_size + tgt_batch_size
     src_repeats = math.ceil(batch_size / src_batch_size)
     tgt_repeats = math.ceil(batch_size / tgt_batch_size)
-    # handle case when source and target are not of same size
     src_embed_rep = torch.cat([src_embed] * src_repeats, dim=0)[:batch_size]
     tgt_embed_rep = torch.cat([tgt_embed] * tgt_repeats, dim=0)[:batch_size]
     kernels = gaussian_kernel(src_embed_rep, tgt_embed_rep, kernel_mul, kernel_num, fix_sigma)
