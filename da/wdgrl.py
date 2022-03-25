@@ -1,6 +1,7 @@
 import torch
 from torch.autograd import grad
 import numpy as np
+import math
 
 
 def wdgrl_update(embeds, domain_labels, optimizer, critic_iter, gp_da_lambda, da_net, da_info):
@@ -20,6 +21,9 @@ def wdgrl_update(embeds, domain_labels, optimizer, critic_iter, gp_da_lambda, da
             # feature extractor is not updated here - detach src and target embeddings
             src_embed = embed[src_mask].detach()
             tgt_embed = embed[tgt_mask].detach()
+            if torch.mean(torch.abs(src_embed) + torch.abs(tgt_embed)) <= 1e-7:
+                print("Warning: feature representations tend towards zero. "
+                      "Consider decreasing 'da_lambda' or using lambda schedule.")
             src_critic = da_net.nets[i](src_embed)
             tgt_critic = da_net.nets[i](tgt_embed)
             # estimation of wasserstein distance
@@ -66,8 +70,8 @@ def gradient_penalty(da_net, src_embed, tgt_embed):
     src_batch_size = src_embed.size(0)
     tgt_batch_size = tgt_embed.size(0)
     batch_size = src_batch_size + tgt_batch_size
-    src_repeats = batch_size // src_batch_size + 1
-    tgt_repeats = batch_size // tgt_batch_size + 1
+    src_repeats = math.ceil(batch_size / src_batch_size)
+    tgt_repeats = math.ceil(batch_size / tgt_batch_size)
     # handle case when source and target are not of same size
     src_embed_rep = torch.cat([src_embed] * src_repeats, dim=0)[:batch_size]
     tgt_embed_rep = torch.cat([tgt_embed] * tgt_repeats, dim=0)[:batch_size]
