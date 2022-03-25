@@ -1,8 +1,6 @@
 import torch
 import math
 
-# implementation adapted from:
-# https://github.com/SSARCandy/DeepCORAL/blob/200f7c8626236b6d04cab048670b85f14deaa17f/models.py#L13
 
 def coral_loss(embeds, domain_labels, da_info):
     loss = torch.tensor(0., device=domain_labels.device)
@@ -24,11 +22,6 @@ def coral_loss(embeds, domain_labels, da_info):
     return loss
 
 
-def comp_cov(x):
-    xm = torch.mean(x, dim=0, keepdim=True) - x
-    return xm.T @ xm
-
-
 def coral(src_embed, tgt_embed):
     src_batch_size = src_embed.size(0)
     tgt_batch_size = tgt_embed.size(0)
@@ -39,9 +32,10 @@ def coral(src_embed, tgt_embed):
     src_embed_rep = torch.cat([src_embed] * src_repeats, dim=0)[:batch_size]
     tgt_embed_rep = torch.cat([tgt_embed] * tgt_repeats, dim=0)[:batch_size]
     d = src_embed_rep.size()[1]
-    src_coral = comp_cov(src_embed_rep)
-    tgt_coral = comp_cov(tgt_embed_rep)
+    src_cov = torch.cov(src_embed_rep.T)
+    tgt_cov = torch.cov(tgt_embed_rep.T)
 
-    loss = torch.mean(torch.mul((src_coral - tgt_coral), (src_coral - tgt_coral)))
+    # squared matrix frobenius norm
+    loss = torch.sum((src_cov - tgt_cov)**2)
     loss = loss / (4 * d * d)
     return loss
