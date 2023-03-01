@@ -19,7 +19,7 @@ setup(
     keywords=["deep learning", "pytorch", "AI", "domain adaptation"],
     python_requires=">=3.7",
     setup_requires=[],
-    install_requires=["numpy==1.21.5", "POT==0.8.0", "scipy==1.7.3", "torch==1.10.1"],
+    install_requires=["numpy>=1.21.5", "POT>=0.8.0", "scipy>=1.7.3", "torch>=1.10.1"],
     classifiers=[
         "Environment :: Console",
         "Natural Language :: English",

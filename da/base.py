@@ -243,7 +243,8 @@ class DABase:
                     embeds: List[torch.Tensor],
                     domain_labels: torch.Tensor,
                     labels: torch.Tensor = None,
-                    predictions: torch.Tensor = None):
+                    predictions: torch.Tensor = None,
+                    reduction = "sum"):
         """Calculates weighted domain adaptation loss and gathers additional information like losses/accuracies achieved
         for each received embedding.
 
@@ -303,7 +304,7 @@ class DABase:
                                  self.da_net)
 
             loss += dann.dann_loss(embeds, domain_labels, self.da_spec_config['dann']['grad_scale_factor'],
-                                   self.da_net, da_info)
+                                   self.da_net, da_info, reduction=reduction)
         elif self.da_type == "cmd":
             loss += cmd.cmd_loss(embeds, domain_labels, self.da_spec_config['cmd']['n_moments'], da_info)
         elif self.da_type == "wdgrl":

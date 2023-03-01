@@ -2,11 +2,15 @@ import torch
 import torch.nn.functional as F
 
 from da.da_helpers import RevGrad
+from sklearn.metrics import balanced_accuracy_score
+import warnings
+warnings.simplefilter('ignore')
 
 
-def dann_loss(embeds, domain_labels, grad_scale_factor, da_net, da_info):
+def dann_loss(embeds, domain_labels, grad_scale_factor, da_net, da_info, reduction):
     loss = torch.tensor(0., device=domain_labels.device)
     da_info['embed_accuracies'] = []
+    da_info['embed_balanced_accuracies'] = []
     for i in range(len(embeds)):
         # RevGrad is static - only one grad_scale_factor possible for all embeddings
         embeds[i] = RevGrad.apply(embeds[i], grad_scale_factor)
@@ -15,10 +19,15 @@ def dann_loss(embeds, domain_labels, grad_scale_factor, da_net, da_info):
     for da_pred in da_preds:
         embed_loss = F.cross_entropy(da_pred, domain_labels)
         embed_acc = (da_pred.max(dim=1)[1] == domain_labels).float().sum() / len(domain_labels)
+        embed_bacc = balanced_accuracy_score(domain_labels.tolist(), da_pred.max(dim=1)[1].tolist())
         loss += embed_loss
         da_info['embed_losses'].append(embed_loss.detach().cpu())
         da_info['embed_accuracies'].append(embed_acc.detach().cpu())
-    return loss
+        da_info['embed_balanced_accuracies'].append(embed_bacc)
+    if reduction == "mean":
+        return loss/len(embeds)
+    else:
+        return loss
 
 
 def dann_update(embeds, domain_labels, da_optimizer, critic_iter, da_net):
